@@ -23,7 +23,7 @@ Each boundary in [AGENTS.md](../AGENTS.md) and what stops an agent from crossing
 | Boundary | Enforced by |
 | :-- | :-- |
 | Keep secrets in `.env`; never commit them | gitleaks (pre-commit when installed, and CI); the tracked-files check, which refuses env files and keys; the guard hook, which blocks agent edits of `.env` and keys; Claude Code's deny rules, which block reading them |
-| Never commit home-folder paths or machine names | The tracked-files check: home-folder paths in pre-commit and CI, user and host names in pre-commit only, because CI runners' names match ordinary words |
+| Never commit home-folder paths or machine names | The tracked-files check: home-folder paths in pre-commit and CI; user and host names in pre-commit only, and only names of five or more characters that aren't generic account names, because short and generic names (and CI runners' names) match ordinary words |
 | Never skip hooks | Partly: the guard hook blocks `--no-verify` and `core.hooksPath=` (Claude Code, Codex), not every way around the hooks (`git commit -n` gets through). CI runs the same checks on every pull request and is the backstop |
 | Never force-push | The guard hook (Claude Code, Codex); branch protection on `main` where the repository has it |
 | Never weaken, skip or delete a failing test or check | Review only ([REVIEW.md](../REVIEW.md)) |

@@ -11,7 +11,11 @@ import { fileURLToPath } from 'node:url';
 const MAX_BYTES = 1024 * 1024;
 const MAX_READ_BYTES = 64 * 1024 * 1024;
 const BINARY_SNIFF_BYTES = 8000;
-const MIN_MACHINE_NAME_LENGTH = 3;
+// A bare user or host name is matched anywhere in the text, so short names ("dev") and generic account names
+// ("Admin") would match ordinary words and block every commit. They identify nobody, and the home-path patterns
+// still catch them in paths.
+const MIN_MACHINE_NAME_LENGTH = 5;
+const GENERIC_NAMES = new Set(['admin', 'administrator', 'guest', 'owner', 'runner', 'ubuntu', 'localhost']);
 const SIZE_LIMIT_EXEMPT = new Set(['package-lock.json', 'pnpm-lock.yaml', 'yarn.lock']);
 const FORBIDDEN_EXTENSIONS = new Set([
   'pem',
@@ -57,7 +61,7 @@ function escapeRegExp(text) {
 
 export function machineNamePatterns(names) {
   return names
-    .filter((name) => name.length >= MIN_MACHINE_NAME_LENGTH)
+    .filter((name) => name.length >= MIN_MACHINE_NAME_LENGTH && !GENERIC_NAMES.has(name.toLowerCase()))
     .map((name) => new RegExp(`(?<![\\w-])${escapeRegExp(name)}(?![\\w-])`, 'i'));
 }
 
