@@ -1,0 +1,11 @@
+# Project settings for the Codex CLI and IDE extension, shared by everyone working in this repo.
+# Codex loads the files in .codex/ only after you mark the project as trusted. Personal settings stay in
+# ~/.codex/config.toml. What each agent reads: docs/AGENT_TOOLS.md.
+
+# Edits stay inside the repo; anything more asks first.
+sandbox_mode = "workspace-write"
+approval_policy = "on-request"
+
+[sandbox_workspace_write]
+# Sandboxed commands get no network. Approve a command when it needs to install or fetch something.
+network_access = false

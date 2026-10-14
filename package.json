@@ -1,0 +1,18 @@
+{
+  "name": "my-project",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "setup": "node scripts/setup.mjs",
+    "verify": "npm run check:files && npm run check:docs && npm run check:skills && npm run test:scripts",
+    "check:docs": "node scripts/check-docs.mjs",
+    "check:files": "node scripts/check-tracked-files.mjs",
+    "check:skills": "node scripts/sync-skills.mjs --check",
+    "sync:skills": "node scripts/sync-skills.mjs",
+    "test:scripts": "node --test \"scripts/**/*.test.mjs\""
+  }
+}

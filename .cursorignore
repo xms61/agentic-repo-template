@@ -1,0 +1,6 @@
+# Keeps local secrets out of Cursor's context and index. .env.example stays visible.
+.env
+.env.*
+!.env.example
+*.pem
+*.key

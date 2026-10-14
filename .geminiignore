@@ -1,0 +1,6 @@
+# Keeps local secrets out of Gemini CLI's context. .env.example stays visible.
+.env
+.env.*
+!.env.example
+*.pem
+*.key

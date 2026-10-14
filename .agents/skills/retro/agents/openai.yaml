@@ -1,0 +1,3 @@
+# Codex: run this skill only when asked for by name. Claude Code reads disable-model-invocation in SKILL.md instead.
+policy:
+  allow_implicit_invocation: false
