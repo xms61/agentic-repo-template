@@ -16,7 +16,7 @@ For AI reviewers (the Claude review workflow and Claude Code Review, Codex throu
 - Tests: new behavior has a test that fails without the change, and no test or check was weakened, skipped or deleted to get green. A test that would still pass if every function it calls returned nothing counts as missing.
 - Secrets and machine details: none in code, logs, docs or fixtures ([docs/SECURITY.md](docs/SECURITY.md)).
 - Docs: changed behavior is reflected in the doc the [AGENTS.md](AGENTS.md) map points to.
-- Agent and CI config: changes to `.github/workflows/`, `.claude/`, `.codex/`, `.gemini/`, `.githooks/` or `scripts/agent-hooks/` are flagged for a human reviewer, and must never let untrusted text (issues, PR descriptions, comments) reach an agent that holds secrets.
+- Agent and CI config: changes to `.github/workflows/`, `.agents/`, `.claude/`, `.codex/`, `.gemini/`, `.githooks/` or `scripts/agent-hooks/` are flagged for a human reviewer, and must never let untrusted text (issues, PR descriptions, comments) reach an agent that holds secrets.
 
 ## Re-reviews
 Report only new findings and whether earlier ones were fixed. Don't repeat resolved points.
