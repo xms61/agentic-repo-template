@@ -95,6 +95,12 @@ test("reports this machine's user and host names, but not longer words that cont
   ]);
 });
 
+test('ignores short and generic account names, which match ordinary words', () => {
+  assert.deepEqual(machineNamePatterns(['dev', 'Admin', 'ubuntu', 'localhost']), []);
+  const patterns = machineNamePatterns(['dev', 'Admin']);
+  assert.deepEqual(checkTrackedFiles([textFile('README.md', 'npm run dev\nOpen the admin page')], patterns), []);
+});
+
 test('skips content checks for binary files', () => {
   assert.deepEqual(checkTrackedFiles([binaryFile('public/logo.png')]), []);
 });
