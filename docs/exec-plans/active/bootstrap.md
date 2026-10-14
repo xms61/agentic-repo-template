@@ -36,7 +36,7 @@ Turn the template into this project's repository: the stack chosen and set up, `
 - (none yet)
 
 ## Validation
-`npm run verify` passes with the stack's checks included, `npm run check:docs` prints no placeholder warnings, and CI is green on the pull request that finishes this plan.
+`npm run verify` passes with the stack's checks included, `npm run check:docs` prints no placeholder warnings, and CI is green on the pull request that finishes this plan. Once this plan moves to `completed/`, any placeholder left fails the doc checks.
 
 ## Outcome
 Filled in when the plan moves to completed/.

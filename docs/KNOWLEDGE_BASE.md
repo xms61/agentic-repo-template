@@ -67,7 +67,7 @@ Set `last-verified` to today's UTC date (`date -u +%F`) whenever you check a doc
 - an exec plan without its required sections ([PLANS.md](PLANS.md));
 - an AGENTS.md longer than 100 lines.
 
-It warns, without failing, about `verified` docs last verified more than 90 days ago and about `TODO(template)` placeholders left from the template. Those warnings are the gardening pass's first work.
+It warns, without failing, about `verified` docs last verified more than 90 days ago. While the bootstrap plan is in `docs/exec-plans/active/`, it also warns that the checks cover the template rather than the project, and about each `TODO(template)` placeholder. Once that plan moves to `completed/`, a placeholder fails the check. The warnings are the gardening pass's first work.
 
 ## Doc gardening
 A pass that keeps the docs true to the code, run before each release, after a large change, or when asked. The procedure is the [doc-gardening skill](../.agents/skills/doc-gardening/SKILL.md): give it to any agent as its task.

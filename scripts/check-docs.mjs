@@ -11,6 +11,9 @@ const ENTRY_MAX_LINES = 100;
 const STALE_AFTER_DAYS = 90;
 const STATUSES = ['stub', 'draft', 'verified'];
 const PLACEHOLDER = 'TODO(template)';
+// While this plan is active the repo is still a template: placeholders are expected work, so they only warn.
+// Once it moves to completed/, a placeholder left behind is an error.
+const BOOTSTRAP_PLAN = 'docs/exec-plans/active/bootstrap.md';
 const SKIPPED_DIRS = new Set(['.git', 'node_modules', 'dist', 'build', 'coverage', 'docs/scratch', '.claude/worktrees']);
 // Entry points and agent config: their links are checked, but they need no frontmatter and no inbound link.
 const META_FILES = new Set(['AGENTS.md', 'CLAUDE.md', 'README.md', 'REVIEW.md', 'TEMPLATE.md', 'CHANGELOG.md']);
@@ -180,6 +183,10 @@ export function checkDocs(root, today = new Date()) {
   if (entryLines > ENTRY_MAX_LINES)
     errors.push(`${ENTRY}: ${entryLines} lines, the limit is ${ENTRY_MAX_LINES}; move detail into docs/ and link it`);
 
+  const bootstrapping = texts.has(BOOTSTRAP_PLAN);
+  if (bootstrapping)
+    warnings.push(`${BOOTSTRAP_PLAN}: bootstrap is not finished, so these checks cover the template, not the project`);
+
   const reachable = reachableFrom(ENTRY, texts);
   const statuses = new Map();
   for (const [path, text] of texts) {
@@ -188,7 +195,10 @@ export function checkDocs(root, today = new Date()) {
     for (const target of linkTargets(text)) {
       if (!existsSync(join(root, resolveLink(path, target)))) errors.push(`${path}: broken link to ${target}`);
     }
-    warnings.push(...placeholderLines(text).map((line) => `${path}:${line}: template placeholder left`));
+    for (const line of placeholderLines(text)) {
+      if (bootstrapping) warnings.push(`${path}:${line}: template placeholder left`);
+      else errors.push(`${path}:${line}: template placeholder left after bootstrap; fill it in or remove it`);
+    }
     if (kind === 'plan') {
       const missing = missingSections(text, PLAN_SECTIONS[posix.dirname(path)]);
       if (missing.length) errors.push(`${path}: missing sections: ${missing.join(', ')}`);
