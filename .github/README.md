@@ -59,3 +59,6 @@ Each choice follows a practice reported by the teams and vendors that run agents
 | CI agents that never see untrusted text and secrets together | `claude-review.yml` prompt, fork and bot skips, write-access only | [Aikido, PromptPwnd](https://www.aikido.dev/blog/promptpwnd-github-actions-ai-agents); [Willison, lethal trifecta](https://simonwillison.net/2025/Jun/16/the-lethal-trifecta/) |
 | Docs kept true by checks and a recurring gardening pass | `scripts/check-docs.mjs`, doc-gardening skill | [OpenAI, Harness engineering](https://openai.com/index/harness-engineering/) |
 | Secrets and machine details kept out of git | tracked-files check, gitleaks, `.gitignore` | [GitGuardian, secrets sprawl 2026](https://www.gitguardian.com/state-of-secrets-sprawl-report-2026) |
+
+## License
+[Apache License 2.0](../LICENSE). The diagnosing-bugs skill and the interview in the exec-plan skill are adapted from Matt Pocock's MIT-licensed skills and carry his notice. A project made from the template chooses its own license in the bootstrap plan.
