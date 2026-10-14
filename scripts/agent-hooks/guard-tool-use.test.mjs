@@ -40,8 +40,15 @@ test('blocks skipping hooks and force pushes', () => {
     'git commit -an -m x',
     'npm run verify && git commit -m "fix: x" -n',
     'git -c core.hooksPath=/dev/null commit -m x',
+    'HUSKY=0 git commit -n -m x',
+    '(git commit -n -m x)',
+    'if true; then git commit -n -m x; fi',
+    'git -C . commit -n -m x',
     'git config core.hooksPath /dev/null',
     'git config --unset core.hooksPath',
+    'git config unset core.hooksPath',
+    'git config unset --all core.hooksPath',
+    'git config remove-section core',
     'git push --force origin main',
     'git push -f',
     'git push --force-with-lease',
@@ -60,8 +67,11 @@ test('allows commands that only look like skipping hooks', () => {
     'git commit -mn',
     'git commit -s -m x',
     'git log -n 5 && git commit -m x',
+    'git log --grep commit -n 5',
     'git config --get core.hooksPath',
     'git config core.hooksPath .githooks',
+    'git config core.hooksPath ".githooks"',
+    'git config core.hooksPath ./.githooks/',
   ]) {
     assert.deepEqual(violations(bash(command)), [], command);
   }

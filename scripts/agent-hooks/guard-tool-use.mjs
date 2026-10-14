@@ -27,9 +27,11 @@ const FILE_RULES = [
     reason: 'looks like a private key. Keys never go in the repo; ask the user.',
   },
 ];
-// Setting core.hooksPath to anything but the repo's own .githooks, or unsetting it, turns the hooks off.
+// Setting core.hooksPath to anything but the repo's own .githooks, unsetting it (--unset, or `git config unset`
+// since git 2.46) or removing the core section turns the hooks off.
 const HOOKS_PATH_CHANGE =
-  /\bcore\.hooksPath\s*=|\bgit\b[^;&|\n]*\bconfig\b[^;&|\n]*(--unset(-all)?\s+core\.hooksPath\b|\bcore\.hooksPath\s+(?!\.githooks(\s|$))[^\s;&|-])/i;
+  /\bcore\.hooksPath\s*=|\bgit\b[^;&|\n]*\bconfig\b[^;&|\n]*(\bunset\b[^;&|\n]*\bcore\.hooksPath\b|\bremove-section\s+core\b|\bcore\.hooksPath\s+(?!["']?(\.\/)?\.githooks\/?["']?(\s|$|[;&|]))[^\s;&|-])/i;
+const SHELL_KEYWORDS = new Set(['then', 'do', 'else', '!', 'time']);
 // Short options of git commit that take a value: in a group such as -am, everything after one is the value.
 const COMMIT_VALUE_OPTIONS = new Set(['m', 'c', 'C', 'F', 't', 'S', 'u']);
 
@@ -41,14 +43,27 @@ function groupHasNoVerify(group) {
   return false;
 }
 
+// The index of the git subcommand: the first word after git that isn't an option, skipping the values of -C and
+// -c, after any VAR=value assignments and shell keywords in front of git. -1 when the words don't run git.
+function gitSubcommandIndex(words) {
+  let index = 0;
+  while (index < words.length && (SHELL_KEYWORDS.has(words[index]) || /^[A-Za-z_]\w*=/.test(words[index]))) index++;
+  if (!/^git(\.exe)?$/i.test(words[index] ?? '')) return -1;
+  for (index += 1; index < words.length; index++) {
+    if (words[index] === '-C' || words[index] === '-c') index++;
+    else if (!words[index].startsWith('-')) return index;
+  }
+  return -1;
+}
+
 // git commit -n is --no-verify, alone or grouped (-an). Quoted text is a message, not options.
 function skipsCommitHooks(command) {
   const unquoted = command.replace(/"(?:[^"\\]|\\.)*"|'[^']*'/g, '""');
-  return unquoted.split(/[;&|\n]/).some((part) => {
+  return unquoted.split(/[;&|\n(){}]/).some((part) => {
     const words = part.trim().split(/\s+/);
-    const commit = words.indexOf('commit');
-    if (words[0] !== 'git' || commit < 0) return false;
-    return words.slice(commit + 1).some((word) => /^-[^-]/.test(word) && groupHasNoVerify(word.slice(1)));
+    const subcommand = gitSubcommandIndex(words);
+    if (subcommand < 0 || words[subcommand] !== 'commit') return false;
+    return words.slice(subcommand + 1).some((word) => /^-[^-]/.test(word) && groupHasNoVerify(word.slice(1)));
   });
 }
 
