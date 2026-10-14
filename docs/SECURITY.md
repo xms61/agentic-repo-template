@@ -7,7 +7,7 @@ last-verified: 2026-10-14
 
 ## Secrets and machine details
 - Secrets live in `.env`, which git ignores, or in the CI secret store. `.env.example` lists every variable name with a comment, never a value.
-- What keeps them out of git: `.gitignore`; the tracked-files check (`scripts/check-tracked-files.mjs`) in the pre-commit hook and CI; and gitleaks, in the pre-commit hook when it is installed and in CI over every pull request's commits. The tracked-files check also refuses private keys, databases, archives, build output, `docs/scratch/` and files over 1 MiB.
+- What keeps them out of git: `.gitignore`; the tracked-files check (`scripts/check-tracked-files.mjs`) in the pre-commit hook and CI; gitleaks, in the pre-commit hook when it is installed and in CI over every pull request's commits; and GitHub's secret scanning with push protection, a repository setting that rejects a push containing a known secret format on GitHub's side, where no local hook can be skipped (free for public repositories). The tracked-files check also refuses private keys, databases, archives, build output, `docs/scratch/` and files over 1 MiB.
 - What keeps them out of agents' context: the guard hook (`scripts/agent-hooks/guard-tool-use.mjs`) for Claude Code and Codex, Claude Code's deny rules, `.cursorignore` and `.geminiignore`. Copilot's content exclusion is a repository setting on GitHub ([AGENT_TOOLS.md](AGENT_TOOLS.md)).
 - Committed files never reveal a developer's machine: no home-folder paths, user names or host names. Refer to locations by env var.
 
@@ -22,7 +22,7 @@ Each boundary in [AGENTS.md](../AGENTS.md) and what stops an agent from crossing
 
 | Boundary | Enforced by |
 | :-- | :-- |
-| Keep secrets in `.env`; never commit them | gitleaks (pre-commit when installed, and CI); the tracked-files check, which refuses env files and keys; the guard hook, which blocks agent edits of `.env` and keys; Claude Code's deny rules, which block reading them |
+| Keep secrets in `.env`; never commit them | GitHub push protection, where it is turned on; gitleaks (pre-commit when installed, and CI); the tracked-files check, which refuses env files and keys; the guard hook, which blocks agent edits of `.env` and keys; Claude Code's deny rules, which block reading them |
 | Never commit home-folder paths or machine names | The tracked-files check: home-folder paths in pre-commit and CI; user and host names in pre-commit only, and only names of five or more characters that aren't generic account names, because short and generic names (and CI runners' names) match ordinary words |
 | Never skip hooks | Partly: the guard hook blocks `--no-verify`, `git commit -n`, changing or unsetting `core.hooksPath`, and removing git's `core` config section (Claude Code, Codex), not every way around the hooks (deleting `.githooks/pre-commit` gets through). CI runs the same checks on every pull request and is the backstop |
 | Never force-push | The guard hook (Claude Code, Codex); branch protection on `main` where the repository has it |
@@ -51,7 +51,7 @@ Each boundary in [AGENTS.md](../AGENTS.md) and what stops an agent from crossing
 ## Dependencies
 - Ask before adding one. Check that the package exists, is maintained, and is the one you meant: models invent plausible package names, and attackers register them.
 - Lockfiles are committed and changed only by the package manager.
-- Dependabot keeps actions and packages current; review its PRs like any other.
+- Dependabot keeps actions and packages current; review its PRs like any other, and check that a new action SHA is the release tag it claims. Dependabot alerts and security updates are repository settings: turn them on, so a known vulnerability in a dependency raises an alert and a fix PR.
 
 ## Reporting a vulnerability
 TODO(template): how to report one (a SECURITY policy on GitHub, or a contact address).
