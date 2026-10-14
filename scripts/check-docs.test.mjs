@@ -83,14 +83,43 @@ test('warns about a verified doc not re-checked for over 90 days', () => {
   assert.deepEqual(checkDocs(staleDraft, TODAY).warnings, []);
 });
 
-test('warns about template placeholders outside code', () => {
+const BOOTSTRAP_PLAN = '# Bootstrap\n## Purpose\nx\n## Progress\n- [ ] x\n## Decision log\n- none\n';
+
+test('warns about template placeholders outside code while the bootstrap plan is active', () => {
   const root = minimalRepo({
     'AGENTS.md': '# Map\n[Style](docs/STYLE.md)\nTODO(template): name\n`TODO(template)` is the marker\n',
     'docs/STYLE.md': `${frontmatter()}# Style\n\`\`\`\nTODO(template)\n\`\`\`\nTODO(template): rules\n`,
+    'docs/exec-plans/active/bootstrap.md': BOOTSTRAP_PLAN,
   });
   assert.deepEqual(checkDocs(root, TODAY), {
     errors: [],
-    warnings: ['AGENTS.md:3: template placeholder left', 'docs/STYLE.md:9: template placeholder left'],
+    warnings: [
+      'docs/exec-plans/active/bootstrap.md: bootstrap is not finished, so these checks cover the template, not the project',
+      'AGENTS.md:3: template placeholder left',
+      'docs/STYLE.md:9: template placeholder left',
+    ],
+  });
+});
+
+test("reports the template's introduction left after bootstrap, but not a project's own .github/README.md", () => {
+  const intro = '# Agent-ready repository template\n\nA starting point.\n';
+  const finished = { 'docs/exec-plans/completed/bootstrap.md': `${BOOTSTRAP_PLAN}## Outcome\nDone.\n` };
+  assert.deepEqual(checkDocs(minimalRepo({ ...finished, '.github/README.md': intro }), TODAY).errors, [
+    ".github/README.md: the template's introduction is left after bootstrap; delete it so GitHub shows the project's README",
+  ]);
+  assert.deepEqual(checkDocs(minimalRepo({ ...finished, '.github/README.md': '# Our project\n' }), TODAY).errors, []);
+  const active = { 'docs/exec-plans/active/bootstrap.md': BOOTSTRAP_PLAN, '.github/README.md': intro };
+  assert.deepEqual(checkDocs(minimalRepo(active), TODAY).errors, []);
+});
+
+test('reports template placeholders as errors once the bootstrap plan is finished', () => {
+  const root = minimalRepo({
+    'docs/STYLE.md': `${frontmatter()}# Style\nTODO(template): rules\n`,
+    'docs/exec-plans/completed/bootstrap.md': `${BOOTSTRAP_PLAN}## Outcome\nDone.\n`,
+  });
+  assert.deepEqual(checkDocs(root, TODAY), {
+    errors: ['docs/STYLE.md:6: template placeholder left after bootstrap; fill it in or remove it'],
+    warnings: [],
   });
 });
 

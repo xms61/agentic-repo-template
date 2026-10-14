@@ -10,14 +10,14 @@ Turn the template into this project's repository: the stack chosen and set up, `
 - `npm run check:docs` lists every placeholder left, by file and line.
 
 ## Plan
-1. Interview the owner, one question at a time: what the project does and for whom; the stack and runtime; where it will run; which coding agents the team uses; whether AI review should run in CI; the license; and how many people will work on it. Record the answers in the Decision log.
+1. Interview the owner as the [exec-plan skill](../../../.agents/skills/exec-plan/SKILL.md) describes, covering: what the project does and for whom; the stack and runtime; where it will run; which coding agents the team uses; whether AI review should run in CI; the license; and how many people will work on it. Record the answers in the Decision log.
 2. Remove the agents the team doesn't use, following AGENT_TOOLS.md.
 3. Add a `LICENSE` file with the chosen license's text; with none, the code stays all rights reserved. If more than one person will work on it, add `.github/CODEOWNERS` and require code-owner review ([SECURITY.md](../../SECURITY.md#agents-in-ci)).
-4. Set up the stack: dependencies, formatter, linter, typecheck and test runner, with one passing test. Fill in the AGENTS.md commands table, add the checks to the `verify` script, and add `cache: npm` to the CI setup-node step once there are dependencies.
+4. Set up the stack: dependencies, formatter, linter, typecheck and test runner, with one passing test. Fill in the AGENTS.md commands table, add the checks to the `verify` script, and add `cache: npm` to both setup-node steps in CI once there are dependencies. Trim the `verify-other-os` job in CI to the systems the team works on; for a private repository on GitHub Free, where Windows and macOS minutes count extra against the free allowance, consider dropping it.
 5. Update `copilot-setup-steps.yml` (and the Codex cloud setup script, if used) so cloud agents can run `npm run verify`.
 6. Fill in README.md, ARCHITECTURE.md and the Stack sections of CODE_STYLE.md and TESTING.md. Once there are two layers, enforce the dependency direction with a lint rule or a structural test.
 7. Once the app has a user-facing feature, write its verification skill ([TESTING.md](../../TESTING.md#verification-skill)) and prove it on that feature. A library skips this step. If the app has no feature yet, add a tech-debt row instead, so the skill is written with the first feature.
-8. Replace the remaining placeholders, then delete TEMPLATE.md.
+8. Replace the remaining placeholders, then delete `.github/README.md`, the template's introduction, which GitHub shows in place of the project's README.
 
 ## Progress
 - [ ] Owner interviewed, answers logged
@@ -27,7 +27,7 @@ Turn the template into this project's repository: the stack chosen and set up, `
 - [ ] Cloud agent setup updated
 - [ ] README.md, ARCHITECTURE.md, CODE_STYLE.md and TESTING.md filled in
 - [ ] Verification skill written and proven on one feature, skipped for a library, or deferred with a tech-debt row until the first user-facing feature
-- [ ] No template placeholders left; TEMPLATE.md deleted
+- [ ] No template placeholders left; `.github/README.md` deleted
 
 ## Decision log
 - (none yet)
@@ -36,7 +36,7 @@ Turn the template into this project's repository: the stack chosen and set up, `
 - (none yet)
 
 ## Validation
-`npm run verify` passes with the stack's checks included, `npm run check:docs` prints no placeholder warnings, and CI is green on the pull request that finishes this plan.
+`npm run verify` passes with the stack's checks included, `npm run check:docs` prints no placeholder warnings, and CI is green on the pull request that finishes this plan. Once this plan moves to `completed/`, any placeholder left fails the doc checks.
 
 ## Outcome
 Filled in when the plan moves to completed/.

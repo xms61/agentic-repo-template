@@ -38,4 +38,4 @@ Once the app runs, it gets a project skill, `.agents/skills/verify-<app>/`, that
 Prove the skill once before relying on it: launch, doctor, drive one feature, capture evidence, clean up, and check that the evidence is still there. The [doc-gardening pass](../.agents/skills/doc-gardening/SKILL.md) drives every feature in the map again and fixes the skill where it has drifted. A library can skip the skill: its tests already call it the way its users do.
 
 ## Repo scripts
-The checks in `scripts/` have their own tests, next to each script as `*.test.mjs`, run by `npm run test:scripts` (Node's built-in test runner). They build their fixtures in temp directories.
+The checks in `scripts/` have their own tests, next to each script as `*.test.mjs`, run by `npm run test:scripts` (Node's built-in test runner). They build their fixtures in temp directories. CI runs `npm run verify` on Linux as the required check, and on Windows and macOS as well, because the hooks and scripts run on all three.

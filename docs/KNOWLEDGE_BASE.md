@@ -43,7 +43,7 @@ Most readers of these docs and skills are agents, and every line in AGENTS.md or
 - End each step of a procedure on a result the agent can check, so it can tell done from not done.
 
 ## Doc metadata
-Every hand-written doc starts with this frontmatter. Exceptions: the root entry files (AGENTS.md, CLAUDE.md, README.md, REVIEW.md, TEMPLATE.md, CHANGELOG.md), agent config under `.agents/`, `.claude/`, `.codex/`, `.gemini/` and `.github/`, and exec plans.
+Every hand-written doc starts with this frontmatter. Exceptions: the root entry files (AGENTS.md, CLAUDE.md, README.md, REVIEW.md, CHANGELOG.md), agent config under `.agents/`, `.claude/`, `.codex/`, `.gemini/` and `.github/`, and exec plans.
 
 ```md
 ---
@@ -65,9 +65,10 @@ Set `last-verified` to today's UTC date (`date -u +%F`) whenever you check a doc
 - missing or invalid frontmatter, or a `last-verified` date more than a day ahead of UTC;
 - a doc in `docs/design-docs/` or `docs/product-specs/` without a row in that folder's `index.md`, or a row whose status differs from the doc's;
 - an exec plan without its required sections ([PLANS.md](PLANS.md));
-- an AGENTS.md longer than 100 lines.
+- an AGENTS.md longer than 100 lines;
+- after bootstrap, a template placeholder left anywhere, or the template's introduction left at `.github/README.md`.
 
-It warns, without failing, about `verified` docs last verified more than 90 days ago and about `TODO(template)` placeholders left from the template. Those warnings are the gardening pass's first work.
+It warns, without failing, about `verified` docs last verified more than 90 days ago. While the bootstrap plan is in `docs/exec-plans/active/`, it also warns that the checks cover the template rather than the project, and about each `TODO(template)` placeholder. Once that plan moves to `completed/`, a placeholder fails the check. The warnings are the gardening pass's first work.
 
 ## Doc gardening
 A pass that keeps the docs true to the code, run before each release, after a large change, or when asked. The procedure is the [doc-gardening skill](../.agents/skills/doc-gardening/SKILL.md): give it to any agent as its task.
