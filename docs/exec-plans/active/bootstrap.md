@@ -17,7 +17,7 @@ Turn the template into this project's repository: the stack chosen and set up, `
 5. Update `copilot-setup-steps.yml` (and the Codex cloud setup script, if used) so cloud agents can run `npm run verify`.
 6. Fill in README.md, ARCHITECTURE.md and the Stack sections of CODE_STYLE.md and TESTING.md. Once there are two layers, enforce the dependency direction with a lint rule or a structural test.
 7. Once the app has a user-facing feature, write its verification skill ([TESTING.md](../../TESTING.md#verification-skill)) and prove it on that feature. A library skips this step. If the app has no feature yet, add a tech-debt row instead, so the skill is written with the first feature.
-8. Replace the remaining placeholders, then delete TEMPLATE.md.
+8. Replace the remaining placeholders, then delete `.github/README.md`, the template's introduction, which GitHub shows in place of the project's README.
 
 ## Progress
 - [ ] Owner interviewed, answers logged
@@ -27,7 +27,7 @@ Turn the template into this project's repository: the stack chosen and set up, `
 - [ ] Cloud agent setup updated
 - [ ] README.md, ARCHITECTURE.md, CODE_STYLE.md and TESTING.md filled in
 - [ ] Verification skill written and proven on one feature, skipped for a library, or deferred with a tech-debt row until the first user-facing feature
-- [ ] No template placeholders left; TEMPLATE.md deleted
+- [ ] No template placeholders left; `.github/README.md` deleted
 
 ## Decision log
 - (none yet)

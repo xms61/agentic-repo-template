@@ -16,7 +16,7 @@ const PLACEHOLDER = 'TODO(template)';
 const BOOTSTRAP_PLAN = 'docs/exec-plans/active/bootstrap.md';
 const SKIPPED_DIRS = new Set(['.git', 'node_modules', 'dist', 'build', 'coverage', 'docs/scratch', '.claude/worktrees']);
 // Entry points and agent config: their links are checked, but they need no frontmatter and no inbound link.
-const META_FILES = new Set(['AGENTS.md', 'CLAUDE.md', 'README.md', 'REVIEW.md', 'TEMPLATE.md', 'CHANGELOG.md']);
+const META_FILES = new Set(['AGENTS.md', 'CLAUDE.md', 'README.md', 'REVIEW.md', 'CHANGELOG.md']);
 const META_DIRS = ['.github/', '.agents/', '.claude/', '.codex/', '.gemini/'];
 const INDEXED_DIRS = ['docs/design-docs', 'docs/product-specs'];
 const PLAN_SECTIONS = {

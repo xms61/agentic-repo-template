@@ -43,7 +43,7 @@ Most readers of these docs and skills are agents, and every line in AGENTS.md or
 - End each step of a procedure on a result the agent can check, so it can tell done from not done.
 
 ## Doc metadata
-Every hand-written doc starts with this frontmatter. Exceptions: the root entry files (AGENTS.md, CLAUDE.md, README.md, REVIEW.md, TEMPLATE.md, CHANGELOG.md), agent config under `.agents/`, `.claude/`, `.codex/`, `.gemini/` and `.github/`, and exec plans.
+Every hand-written doc starts with this frontmatter. Exceptions: the root entry files (AGENTS.md, CLAUDE.md, README.md, REVIEW.md, CHANGELOG.md), agent config under `.agents/`, `.claude/`, `.codex/`, `.gemini/` and `.github/`, and exec plans.
 
 ```md
 ---

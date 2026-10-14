@@ -2,7 +2,7 @@
 
 TODO(template): What this project does and who it is for, in two sentences.
 
-New from the template? Follow `TEMPLATE.md`, then delete it.
+New from the template? Follow [.github/README.md](.github/README.md), the template's own introduction, then delete it.
 
 ## Develop
 The repo tooling needs Node 22 or later (`.nvmrc` pins 24).

@@ -1,14 +1,16 @@
 # Agent-ready repository template
 
-A starting point for a new repository where coding agents (Claude Code, OpenAI Codex, GitHub Copilot, Gemini CLI, Cursor) do much of the work, locally and in CI. It holds no application code and assumes no stack: the docs, agent config and checks are stack-neutral, and the checks are Node scripts with no dependencies. Delete this file when the bootstrap plan is done.
+A starting point for a new repository where coding agents (Claude Code, OpenAI Codex, GitHub Copilot, Gemini CLI, Cursor) do much of the work, locally and in CI. It holds no application code and assumes no stack: the docs and agent config are stack-neutral, and the checks are Node scripts with no dependencies, so a project needs Node 22 or later whatever its own stack.
+
+This page is the template's introduction. GitHub shows it in place of the root `README.md`, which belongs to the new project. Delete this file when the bootstrap plan is done.
 
 ## Start
-1. Copy the contents into an empty folder and run `git init -b main`.
+1. Click **Use this template** on GitHub, or copy the contents into an empty folder and run `git init -b main`.
 2. Install Node 22 or later (`.nvmrc` pins 24), then run `npm run setup` to enable the git hooks.
-3. Run `npm run verify`. It passes, and warns about each `TODO(template)` placeholder left to fill in.
-4. Commit and push. On GitHub, protect `main`: require the `verify` and `secrets` CI checks and one approving review, and turn on "Do not allow bypassing the above settings" so the rules bind admins too. Working alone, require the checks but not the review: nobody else can approve your pull requests. GitHub Free offers branch protection only for public repositories. Create the `ready-for-agent` label that tickets use ([docs/AGENT_TOOLS.md](docs/AGENT_TOOLS.md)).
-5. Optional: switch on the Claude workflows, the Copilot coding agent and Codex cloud, as [docs/AGENT_TOOLS.md](docs/AGENT_TOOLS.md) describes.
-6. Ask your coding agent to "resume the bootstrap exec plan". The [plan](docs/exec-plans/active/bootstrap.md) has it interview you, remove the agents you don't use, set up the stack, and fill in the placeholders.
+3. Run `npm run verify`. It passes, warns that the checks cover the template rather than the project, and warns about each `TODO(template)` placeholder left to fill in. Once the bootstrap plan is finished, a placeholder fails the check.
+4. Commit and push. On GitHub, protect `main`: require the `verify` and `secrets` CI checks and one approving review, and turn on "Do not allow bypassing the above settings" so the rules bind admins too. Working alone, require the checks but not the review: nobody else can approve your pull requests. GitHub Free offers branch protection only for public repositories. Create the `ready-for-agent` label that tickets use ([docs/AGENT_TOOLS.md](../docs/AGENT_TOOLS.md)).
+5. Optional: switch on the Claude workflows, the Copilot coding agent and Codex cloud, as [docs/AGENT_TOOLS.md](../docs/AGENT_TOOLS.md) describes.
+6. Ask your coding agent to "resume the bootstrap exec plan". The [plan](../docs/exec-plans/active/bootstrap.md) has it interview you, remove the agents you don't use, set up the stack, and fill in the placeholders.
 
 ## What's in the box
 | Path | What it does |
@@ -26,8 +28,15 @@ A starting point for a new repository where coding agents (Claude Code, OpenAI C
 | `.github/workflows/` | CI (`npm run verify` and gitleaks), Copilot setup steps, opt-in Claude mention and review workflows |
 | `.gitleaks.toml`, `.gitignore`, `.gitattributes`, `.editorconfig`, `.env.example`, `.nvmrc` | Secret scanning, ignores, LF line endings, editor defaults, env variable names, Node version |
 
+## Known limits
+- The checks need Node 22 or later, whatever the project's own stack.
+- Hooks and permission rules stop an agent's mistakes, not a determined attacker. [SECURITY.md](../docs/SECURITY.md#boundaries-and-what-enforces-them) says what each boundary rests on, and the [tech-debt tracker](../docs/exec-plans/tech-debt-tracker.md) lists the gaps.
+- The merge boundary is GitHub's branch protection, which step 4 switches on. GitHub Free offers it only for public repositories.
+- On native Windows, Claude Code runs commands outside its sandbox; the permission rules and the guard hook still apply.
+- `npm run verify` checks the template's own tooling until the bootstrap plan adds the project's lint, typecheck and tests.
+
 ## Why it is built this way
-Each choice follows a practice reported by the teams and vendors that run agents at scale. The reasons are in [core beliefs](docs/design-docs/core-beliefs.md); in short:
+Each choice follows a practice reported by the teams and vendors that run agents at scale. The reasons are in [core beliefs](../docs/design-docs/core-beliefs.md); in short:
 
 | Practice | Where it lives here | Source |
 | :-- | :-- | :-- |
