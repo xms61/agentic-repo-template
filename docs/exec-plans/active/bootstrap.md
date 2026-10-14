@@ -10,7 +10,7 @@ Turn the template into this project's repository: the stack chosen and set up, `
 - `npm run check:docs` lists every placeholder left, by file and line.
 
 ## Plan
-1. Interview the owner, one question at a time: what the project does and for whom; the stack and runtime; where it will run; which coding agents the team uses; whether AI review should run in CI; the license; and how many people will work on it. Record the answers in the Decision log.
+1. Interview the owner as the [exec-plan skill](../../../.agents/skills/exec-plan/SKILL.md) describes, covering: what the project does and for whom; the stack and runtime; where it will run; which coding agents the team uses; whether AI review should run in CI; the license; and how many people will work on it. Record the answers in the Decision log.
 2. Remove the agents the team doesn't use, following AGENT_TOOLS.md.
 3. Add a `LICENSE` file with the chosen license's text; with none, the code stays all rights reserved. If more than one person will work on it, add `.github/CODEOWNERS` and require code-owner review ([SECURITY.md](../../SECURITY.md#agents-in-ci)).
 4. Set up the stack: dependencies, formatter, linter, typecheck and test runner, with one passing test. Fill in the AGENTS.md commands table, add the checks to the `verify` script, and add `cache: npm` to the CI setup-node step once there are dependencies.
