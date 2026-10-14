@@ -19,7 +19,7 @@ This page is the template's introduction. GitHub shows it in place of the root `
 | `CLAUDE.md`, `.claude/` | Claude Code: imports AGENTS.md; permissions, sandbox, guard hook, reviewer subagent, mirrored skills |
 | `.codex/` | Codex: sandbox and approval settings, guard hook |
 | `.gemini/`, `.geminiignore`, `.cursorignore`, `.github/copilot-instructions.md` | Gemini CLI, Cursor and Copilot: point to AGENTS.md and keep secrets out of context |
-| `.agents/skills/` | Shared on-demand procedures: exec plans and their tickets, doc gardening, retros |
+| `.agents/skills/` | Shared on-demand procedures: exec plans and their tickets, doc gardening, bug diagnosis, retros |
 | `REVIEW.md` | What AI and human reviewers report (P0/P1 only) and skip |
 | `ARCHITECTURE.md`, `docs/` | The system of record: core beliefs, plans, style, testing, security, agent tools, the knowledge-base rules |
 | `docs/exec-plans/` | Exec plans, starting with the bootstrap plan, and the tech-debt tracker |
@@ -49,6 +49,7 @@ Each choice follows a practice reported by the teams and vendors that run agents
 | Parallel work split into vertical-slice tickets with blocking edges, while decisions stay in the repo | `docs/PLANS.md`, exec-plan skill, GitHub Issues | [Pocock, to-tickets](https://aihero.dev/skills-to-tickets) |
 | Repeated agent mistakes turned into checks, at the highest level that holds, with each boundary paired with its enforcer | retro skill, the boundaries table in `docs/SECURITY.md` | [pstack, correct](https://github.com/backnotprop/pstack/blob/main/skills/correct/SKILL.md); [Pocock, retro](https://github.com/mattpocock/skills/blob/main/skills/engineering/retro/SKILL.md) |
 | Custom checks tested against the real mistake, and checks at edit time only for findings with a reliable fix | `docs/CODE_STYLE.md` | [Semgrep, testing rules](https://docs.semgrep.dev/writing-rules/testing-rules); [Semgrep Guardian rules](https://docs.semgrep.dev/semgrep-guardian/rules-and-configuration) |
+| Bugs fixed from a check that fails on them, not from a theory, with the check kept as a regression test | diagnosing-bugs skill | [Pocock, diagnosing-bugs](https://github.com/mattpocock/skills/blob/main/skills/engineering/diagnosing-bugs/SKILL.md) |
 | A scripted way for agents to drive the real app and keep the evidence | `docs/TESTING.md`, the bootstrap plan | [pstack, create-verification-skill](https://github.com/backnotprop/pstack/blob/main/skills/create-verification-skill/SKILL.md) |
 | Design docs only for decisions that are hard to reverse, surprising and a real trade-off | `docs/design-docs/index.md` | [Pocock, ADR format](https://github.com/mattpocock/skills/blob/main/skills/engineering/domain-modeling/ADR-FORMAT.md) |
 | Fresh-context review tuned to P0/P1 findings | `REVIEW.md`, reviewer subagent, review workflow | [Codex code review](https://learn.chatgpt.com/docs/third-party/github); [Claude Code review](https://code.claude.com/docs/en/code-review) |

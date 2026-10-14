@@ -12,7 +12,7 @@ Which coding agent reads which file, what is set up for each, how to switch on t
 | :-- | :-- | :-- |
 | [AGENTS.md](../AGENTS.md) | The map, commands and boundaries | All. Claude Code through the import in CLAUDE.md, Gemini CLI through its settings |
 | [REVIEW.md](../REVIEW.md) | What reviewers report and skip | Claude review workflow and Claude Code Review; Codex through the Review guidelines in AGENTS.md; Copilot through its instructions file |
-| [.agents/skills/](../.agents/skills/) | Procedures loaded on demand: [exec-plan](../.agents/skills/exec-plan/SKILL.md), [doc-gardening](../.agents/skills/doc-gardening/SKILL.md), and [retro](../.agents/skills/retro/SKILL.md), which Claude Code (through its frontmatter) and Codex (through its `agents/openai.yaml`) run only when someone asks for it | Codex, Gemini CLI, Cursor, Copilot; mirrored for Claude Code |
+| [.agents/skills/](../.agents/skills/) | Procedures loaded on demand: [exec-plan](../.agents/skills/exec-plan/SKILL.md), [doc-gardening](../.agents/skills/doc-gardening/SKILL.md), [diagnosing-bugs](../.agents/skills/diagnosing-bugs/SKILL.md), and [retro](../.agents/skills/retro/SKILL.md), which Claude Code (through its frontmatter) and Codex (through its `agents/openai.yaml`) run only when someone asks for it | Codex, Gemini CLI, Cursor, Copilot; mirrored for Claude Code |
 | [scripts/agent-hooks/guard-tool-use.mjs](../scripts/agent-hooks/guard-tool-use.mjs) | Blocks edits to `.env`, keys, lockfiles and `.git/`, and commands that skip hooks, force-push or touch `.env` | Claude Code, Codex |
 
 To scope rules to one folder for every agent, add a nested `AGENTS.md` in that folder rather than a tool-specific rules file.
