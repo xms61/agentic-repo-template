@@ -2,3 +2,7 @@
 * text=auto eol=lf
 *.cmd text eol=crlf
 *.bat text eol=crlf
+
+# The Claude Code skills mirror is written by scripts/sync-skills.mjs, so GitHub collapses it in pull request diffs.
+# Review skill changes in .agents/skills/; the skills check keeps the mirror identical to it.
+.claude/skills/** linguist-generated=true
