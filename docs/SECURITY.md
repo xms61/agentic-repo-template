@@ -29,7 +29,7 @@ Each boundary in [AGENTS.md](../AGENTS.md) and what stops an agent from crossing
 | Never weaken, skip or delete a failing test or check | Review only ([REVIEW.md](../REVIEW.md)) |
 | Never downgrade a dependency to make a build pass | Partly: the guard hook blocks hand edits of lockfiles. Otherwise review only |
 | Ask before adding a dependency | Partly: Claude Code asks before `npm install` and `npm i` (Bash and PowerShell), not `npm add`, other package managers or hand edits of `package.json`; Codex's sandbox has no network |
-| Ask before changing CI workflows or agent config | Claude Code asks before editing those paths; REVIEW.md flags such changes for a human |
+| Ask before changing CI workflows or agent config | Claude Code asks before editing those paths; REVIEW.md flags such changes for a human; on a team, code-owner review ([below](#agents-in-ci)) |
 | Ask before pushing to `main` | Partly: Claude Code asks before a `git push` that names `main`, not a bare `git push` from `main`; Codex's sandbox has no network, so every push needs approval. Branch protection stops the rest where the repository has it: GitHub Free offers it only for public repositories, and admins bypass it unless "Do not allow bypassing the above settings" is on |
 | Ask before working on an issue without the `ready-for-agent` label | Partly: only people with triage access can apply labels on GitHub. Nothing stops a local agent from reading an unlabelled issue |
 | Keep the change to the task; ask before deleting files you didn't create, pushing to someone else's branch or migrating data | Judgment: review only |
@@ -46,6 +46,7 @@ Each boundary in [AGENTS.md](../AGENTS.md) and what stops an agent from crossing
 - Agent workflows are opt-in, run only for people with write access, skip forks and bots, request the least permissions they need, and pin actions to commit SHAs.
 - Untrusted text (issue or PR titles and bodies, comments, branch names) is never interpolated into an agent prompt or a shell command in a workflow. Pass the PR number and let the agent read the rest as data. Interpolated text is how attackers took over CI agents in the "PromptPwnd" attacks (2025).
 - AI review is advisory. Branch protection requires the CI checks and a human approval before merge.
+- On a team, `.github/CODEOWNERS` assigns the paths REVIEW.md flags for a human (`.github/`, `.githooks/`, `.agents/`, `.claude/`, `.codex/`, `.gemini/` and `scripts/agent-hooks/`) to people, and branch protection requires code-owner review. It works only with branch protection and a reviewer other than the author, so a one-person repository skips it.
 
 ## Dependencies
 - Ask before adding one. Check that the package exists, is maintained, and is the one you meant: models invent plausible package names, and attackers register them.
