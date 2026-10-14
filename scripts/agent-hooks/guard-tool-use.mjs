@@ -27,17 +27,43 @@ const FILE_RULES = [
     reason: 'looks like a private key. Keys never go in the repo; ask the user.',
   },
 ];
+// Setting core.hooksPath to anything but the repo's own .githooks, or unsetting it, turns the hooks off.
+const HOOKS_PATH_CHANGE =
+  /\bcore\.hooksPath\s*=|\bgit\b[^;&|\n]*\bconfig\b[^;&|\n]*(--unset(-all)?\s+core\.hooksPath\b|\bcore\.hooksPath\s+(?!\.githooks(\s|$))[^\s;&|-])/i;
+// Short options of git commit that take a value: in a group such as -am, everything after one is the value.
+const COMMIT_VALUE_OPTIONS = new Set(['m', 'c', 'C', 'F', 't', 'S', 'u']);
+
+function groupHasNoVerify(group) {
+  for (const option of group) {
+    if (option === 'n') return true;
+    if (COMMIT_VALUE_OPTIONS.has(option)) return false;
+  }
+  return false;
+}
+
+// git commit -n is --no-verify, alone or grouped (-an). Quoted text is a message, not options.
+function skipsCommitHooks(command) {
+  const unquoted = command.replace(/"(?:[^"\\]|\\.)*"|'[^']*'/g, '""');
+  return unquoted.split(/[;&|\n]/).some((part) => {
+    const words = part.trim().split(/\s+/);
+    const commit = words.indexOf('commit');
+    if (words[0] !== 'git' || commit < 0) return false;
+    return words.slice(commit + 1).some((word) => /^-[^-]/.test(word) && groupHasNoVerify(word.slice(1)));
+  });
+}
+
 const COMMAND_RULES = [
   {
-    pattern: /(^|\s)--no-verify(?=\s|$)|\bcore\.hooksPath\s*=/i,
+    test: (command) => /(^|\s)--no-verify(?=\s|$)/i.test(command) || HOOKS_PATH_CHANGE.test(command) || skipsCommitHooks(command),
     reason: 'skips the git hooks that check secrets and docs. Fix what the hook reports instead.',
   },
   {
-    pattern: /\bgit\b[^;&|\n]*\bpush\b[^;&|\n]*\s(-f|--force|--force-with-lease)(=\S*)?(?=\s|$)|\bgit\b[^;&|\n]*\bpush\b[^;&|\n]*\s\+\S/,
+    test: (command) =>
+      /\bgit\b[^;&|\n]*\bpush\b[^;&|\n]*\s(-f|--force|--force-with-lease)(=\S*)?(?=\s|$)|\bgit\b[^;&|\n]*\bpush\b[^;&|\n]*\s\+\S/.test(command),
     reason: 'rewrites shared history. Ask the user to run it.',
   },
   {
-    pattern: /(^|[\s'"=/<>])\.env(?!\.example)(\.[\w.-]+)?(?=$|[\s'";|&)<>])/,
+    test: (command) => /(^|[\s'"=/<>])\.env(?!\.example)(\.[\w.-]+)?(?=$|[\s'";|&)<>])/.test(command),
     reason: 'touches .env, which holds local secrets. Read .env.example for the variable names, and ask the user for values.',
   },
 ];
@@ -61,8 +87,8 @@ export function violations(event) {
     if (rule) found.push(`Blocked edit of ${path}: it ${rule.reason}`);
   }
   const command = shellCommand(event);
-  for (const { pattern, reason } of COMMAND_RULES) {
-    if (pattern.test(command)) found.push(`Blocked command: it ${reason}`);
+  for (const { test, reason } of COMMAND_RULES) {
+    if (test(command)) found.push(`Blocked command: it ${reason}`);
   }
   return found;
 }

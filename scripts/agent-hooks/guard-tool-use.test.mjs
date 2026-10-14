@@ -36,7 +36,12 @@ test('blocks shell commands that read or write .env', () => {
 test('blocks skipping hooks and force pushes', () => {
   for (const command of [
     'git commit --no-verify -m x',
+    'git commit -n -m x',
+    'git commit -an -m x',
+    'npm run verify && git commit -m "fix: x" -n',
     'git -c core.hooksPath=/dev/null commit -m x',
+    'git config core.hooksPath /dev/null',
+    'git config --unset core.hooksPath',
     'git push --force origin main',
     'git push -f',
     'git push --force-with-lease',
@@ -45,6 +50,21 @@ test('blocks skipping hooks and force pushes', () => {
     assert.equal(violations(bash(command)).length, 1, command);
   }
   assert.deepEqual(violations(bash('git push -u origin feature/x')), []);
+});
+
+test('allows commands that only look like skipping hooks', () => {
+  for (const command of [
+    'git commit -m "add -fn flag"',
+    "git commit -m 'see -n in the docs'",
+    'git commit -am "fix: x"',
+    'git commit -mn',
+    'git commit -s -m x',
+    'git log -n 5 && git commit -m x',
+    'git config --get core.hooksPath',
+    'git config core.hooksPath .githooks',
+  ]) {
+    assert.deepEqual(violations(bash(command)), [], command);
+  }
 });
 
 test('reads the files in a Codex apply_patch call', () => {
