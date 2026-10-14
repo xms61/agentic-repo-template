@@ -25,7 +25,9 @@ Write three to five, most likely first, each with the observation that would rul
 Use a debugger, or a few logs at the boundary in question, each tagged with one unique prefix such as `[debug-4f2a]`. For something slow, measure a baseline and compare instead of reading logs. If two fixes have failed, the causes you listed share a wrong assumption: go back to step 3 and question it.
 
 ## 5. Fix it and keep the test
-1. Turn the small check into a regression test at a layer where it exercises the real bug. If no such layer exists, say so in the pull request; that is a finding for the [retro skill](../retro/SKILL.md).
+1. Turn the small check into a regression test at a layer where it exercises the real bug. If no unit test can reach it, use an end-to-end check ([TESTING.md](../../../docs/TESTING.md)); if nothing can, say so in the pull request and add a row to the [tech-debt tracker](../../../docs/exec-plans/tech-debt-tracker.md).
 2. Watch the test fail, fix the root cause, and watch it pass. Run the check from step 1 again.
 3. Remove every tagged log (search for the prefix) and any throwaway script, then run `npm run verify`.
 4. In the commit or pull request, state the cause you confirmed and the evidence for it.
+
+Adapted from [Matt Pocock's diagnosing-bugs skill](https://github.com/mattpocock/skills/blob/main/skills/engineering/diagnosing-bugs/SKILL.md) (MIT License, Copyright (c) 2026 Matt Pocock).

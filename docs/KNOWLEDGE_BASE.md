@@ -65,7 +65,8 @@ Set `last-verified` to today's UTC date (`date -u +%F`) whenever you check a doc
 - missing or invalid frontmatter, or a `last-verified` date more than a day ahead of UTC;
 - a doc in `docs/design-docs/` or `docs/product-specs/` without a row in that folder's `index.md`, or a row whose status differs from the doc's;
 - an exec plan without its required sections ([PLANS.md](PLANS.md));
-- an AGENTS.md longer than 100 lines.
+- an AGENTS.md longer than 100 lines;
+- after bootstrap, a template placeholder left anywhere, or the template's introduction left at `.github/README.md`.
 
 It warns, without failing, about `verified` docs last verified more than 90 days ago. While the bootstrap plan is in `docs/exec-plans/active/`, it also warns that the checks cover the template rather than the project, and about each `TODO(template)` placeholder. Once that plan moves to `completed/`, a placeholder fails the check. The warnings are the gardening pass's first work.
 

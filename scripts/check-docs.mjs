@@ -14,6 +14,9 @@ const PLACEHOLDER = 'TODO(template)';
 // While this plan is active the repo is still a template: placeholders are expected work, so they only warn.
 // Once it moves to completed/, a placeholder left behind is an error.
 const BOOTSTRAP_PLAN = 'docs/exec-plans/active/bootstrap.md';
+// The template's introduction, which GitHub shows ahead of the project's README; bootstrap deletes it.
+const TEMPLATE_INTRO = '.github/README.md';
+const TEMPLATE_INTRO_TITLE = '# Agent-ready repository template';
 const SKIPPED_DIRS = new Set(['.git', 'node_modules', 'dist', 'build', 'coverage', 'docs/scratch', '.claude/worktrees']);
 // Entry points and agent config: their links are checked, but they need no frontmatter and no inbound link.
 const META_FILES = new Set(['AGENTS.md', 'CLAUDE.md', 'README.md', 'REVIEW.md', 'CHANGELOG.md']);
@@ -186,6 +189,8 @@ export function checkDocs(root, today = new Date()) {
   const bootstrapping = texts.has(BOOTSTRAP_PLAN);
   if (bootstrapping)
     warnings.push(`${BOOTSTRAP_PLAN}: bootstrap is not finished, so these checks cover the template, not the project`);
+  else if (texts.get(TEMPLATE_INTRO)?.split(/\r?\n/)[0].trim() === TEMPLATE_INTRO_TITLE)
+    errors.push(`${TEMPLATE_INTRO}: the template's introduction is left after bootstrap; delete it so GitHub shows the project's README`);
 
   const reachable = reachableFrom(ENTRY, texts);
   const statuses = new Map();

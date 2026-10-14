@@ -11,7 +11,7 @@ The rules and the templates are in [docs/PLANS.md](../../../docs/PLANS.md); this
 1. List `docs/exec-plans/active/`. If a plan already covers the work, resume it instead.
 2. Copy the template from docs/PLANS.md to `docs/exec-plans/active/YYYY-MM-DD-<short-name>.md`, dated with today's UTC date.
 3. Fill in Purpose, Context and Plan. Split the plan into milestones that can each be verified on their own, and write the Validation commands.
-4. If the request leaves design choices open, interview the user before writing code. Ask in rounds: a round holds every open question that doesn't wait on another question's answer, numbered, each with your recommended answer and worded so that "yes" accepts it. Look facts up in the code and docs yourself; only decisions go to the user. Stop when no question is left and the user agrees you understand each other. Log each answer in the Decision log, add a settled term to the glossary ([KNOWLEDGE_BASE.md](../../../docs/KNOWLEDGE_BASE.md#growing-the-docs)), and write a design doc for a decision that clears [the bar](../../../docs/design-docs/index.md).
+4. If the request leaves design choices open, interview the user before writing code. Ask in rounds: a round holds every open question that doesn't wait on another question's answer, numbered, each with your recommended answer and worded so that "yes" accepts it. Look facts up in the code and docs yourself; only decisions go to the user. Stop when no question is left and the user agrees you understand each other. Log each answer in the Decision log, and write a design doc for a decision that clears [the bar](../../../docs/design-docs/index.md). Add a term the interview settled to `docs/GLOSSARY.md` if it exists, or create it when the user and the code used different words for one thing ([KNOWLEDGE_BASE.md](../../../docs/KNOWLEDGE_BASE.md#growing-the-docs)).
 5. If milestones can run in parallel, or another person or a cloud agent will pick them up, split them into tickets.
 
 ## Split into tickets
@@ -36,3 +36,5 @@ The rules and the templates are in [docs/PLANS.md](../../../docs/PLANS.md); this
 2. Run the Validation commands and record the result.
 3. Fill in Outcome, move the file to `docs/exec-plans/completed/`, and update links to it.
 4. Run `npm run verify`.
+
+The interview in Start step 4 is adapted from [Matt Pocock's grilling skill](https://github.com/mattpocock/skills/blob/main/skills/productivity/grilling/SKILL.md) (MIT License, Copyright (c) 2026 Matt Pocock); the ticket rules follow his to-tickets skill.
