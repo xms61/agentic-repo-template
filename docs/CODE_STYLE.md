@@ -14,7 +14,7 @@ How code in this repo is written. A rule a tool can check belongs in the linter 
 - Prefer boring, well-known libraries and the platform's built-ins. Agents and new people already know them, and their APIs are stable.
 - Validate input where it enters the system, and make error messages say what went wrong and how to fix it. The reader is often an agent that will act on the message.
 - Structured logs with stable field names. Never log secrets or personal data.
-- No emoji or marketing words in code, logs, commits or docs.
+- No emoji or marketing words in code, logs, commits or docs. A coding agent's own attribution line is the exception ([below](#commits-and-pull-requests)).
 
 ## Custom checks
 When a rule can be checked, write the check instead of the sentence. The [retro skill](../.agents/skills/retro/SKILL.md) decides which level a rule gets; this is how to write the check.
@@ -33,6 +33,7 @@ TODO(template): language version, formatter, linter and their config files, and 
 - Commit subjects follow `type(scope): summary`, with types feat, fix, docs, refactor, test, chore and ci.
 - One logical change per PR, small enough to review in one sitting. Agent PRs follow the same rules as human ones; small changes are where agents succeed most often.
 - The PR template asks what was verified and how. "Not checked" is a valid answer; a missing answer is not.
+- Coding agents record their part themselves: Claude Code adds a `Co-Authored-By` trailer to its commits and an attribution line to the end of its pull request descriptions. Keep what the tool adds, as it adds it, and don't write a second credit by hand.
 
 ## Releases
 - Pull requests leave the version and CHANGELOG.md alone, so parallel ones don't conflict on the same lines. Both change once, at release.
