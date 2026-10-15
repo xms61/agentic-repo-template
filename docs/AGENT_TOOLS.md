@@ -1,6 +1,6 @@
 ---
 status: draft
-last-verified: 2026-10-14
+last-verified: 2026-10-15
 ---
 
 # Agent tools
@@ -12,7 +12,7 @@ Which coding agent reads which file, what is set up for each, how to switch on t
 | :-- | :-- | :-- |
 | [AGENTS.md](../AGENTS.md) | The map, commands and boundaries | All. Claude Code through the import in CLAUDE.md, Gemini CLI through its settings |
 | [REVIEW.md](../REVIEW.md) | What reviewers report and skip | Claude review workflow and Claude Code Review; Codex through the Review guidelines in AGENTS.md; Copilot through its instructions file |
-| [.agents/skills/](../.agents/skills/) | Procedures loaded on demand: [exec-plan](../.agents/skills/exec-plan/SKILL.md), [doc-gardening](../.agents/skills/doc-gardening/SKILL.md), [diagnosing-bugs](../.agents/skills/diagnosing-bugs/SKILL.md), and [retro](../.agents/skills/retro/SKILL.md), which Claude Code (through its frontmatter) and Codex (through its `agents/openai.yaml`) run only when someone asks for it | Codex, Gemini CLI, Cursor, Copilot; mirrored for Claude Code |
+| [.agents/skills/](../.agents/skills/) | Procedures loaded on demand: [exec-plan](../.agents/skills/exec-plan/SKILL.md), [doc-gardening](../.agents/skills/doc-gardening/SKILL.md), [diagnosing-bugs](../.agents/skills/diagnosing-bugs/SKILL.md), and [retro](../.agents/skills/retro/SKILL.md), which Claude Code (through its frontmatter) and Codex (through its `agents/openai.yaml`) run only when someone asks for it. `npm run check:skills` checks each skill's frontmatter ([scripts/check-skills.mjs](../scripts/check-skills.mjs)): a `name` that matches its folder, a description, and the same ask-only setting for both agents | Codex, Gemini CLI, Cursor, Copilot; mirrored for Claude Code |
 | [scripts/agent-hooks/guard-tool-use.mjs](../scripts/agent-hooks/guard-tool-use.mjs) | Blocks edits to `.env`, keys, lockfiles and `.git/`, and commands that skip hooks, force-push or touch `.env` | Claude Code, Codex |
 
 To scope rules to one folder for every agent, add a nested `AGENTS.md` in that folder rather than a tool-specific rules file.
@@ -44,7 +44,7 @@ Do the steps in that agent's **Remove** list below. Then delete the agent's sect
 
 **Remove:**
 1. Delete `CLAUDE.md`, `.claude/`, `.github/workflows/claude.yml` and `.github/workflows/claude-review.yml`.
-2. Delete `scripts/sync-skills.mjs` and `scripts/sync-skills.test.mjs`. In `package.json`, delete the `check:skills` and `sync:skills` scripts and remove `check:skills` from `verify`. Delete the `sync-skills` line in `.githooks/pre-commit`. In the AGENTS.md commands table, change the Skills row to "Edit `.agents/skills/`".
+2. Delete `scripts/sync-skills.mjs` and `scripts/sync-skills.test.mjs`. In `package.json`, delete the `sync:skills` script, and the `sync-skills.mjs --check` command from `check:skills`. Delete the `sync-skills` line in `.githooks/pre-commit`. In the AGENTS.md commands table, change the Skills row to "Edit `.agents/skills/`".
 3. Remove the Claude lines from `.gitignore`; the CLAUDE.md row and the mirror note in the skills row of [KNOWLEDGE_BASE.md](KNOWLEDGE_BASE.md); and the Claude mentions in [REVIEW.md](../REVIEW.md) and [SECURITY.md](SECURITY.md).
 4. If Codex is also gone, delete `scripts/agent-hooks/` and its mentions in SECURITY.md, REVIEW.md and the [ARCHITECTURE.md](../ARCHITECTURE.md) code map.
 
@@ -55,7 +55,7 @@ Do the steps in that agent's **Remove** list below. Then delete the agent's sect
 
 **Notes:** Codex loads `.codex/` only after you mark the project as trusted. For Codex cloud tasks, set the environment's setup script to `npm ci` in the Codex settings; cloud tasks have no internet access by default. AGENTS.md files are read up to 32 KiB in total.
 
-**Remove:** delete `.codex/`. If Claude Code is also gone, do step 4 of the Claude Code removal.
+**Remove:** delete `.codex/`. Keep the skills' `agents/openai.yaml` files: other agents ignore them, and `check:skills` expects one beside every skill marked `disable-model-invocation: true` in `.agents/skills/`. If Claude Code is also gone, do step 4 of the Claude Code removal.
 
 ## GitHub Copilot
 **Files:** [.github/copilot-instructions.md](../.github/copilot-instructions.md) (points to AGENTS.md and REVIEW.md) and [copilot-setup-steps.yml](../.github/workflows/copilot-setup-steps.yml) (installs what the coding agent needs before it starts). Copilot also reads AGENTS.md, `.agents/skills/` and `.claude/skills/`; while the Claude mirror exists it may list a skill twice.

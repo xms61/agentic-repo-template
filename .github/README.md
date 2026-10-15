@@ -23,7 +23,7 @@ This page is the template's introduction. GitHub shows it in place of the root `
 | `REVIEW.md` | What AI and human reviewers report (P0/P1 only) and skip |
 | `ARCHITECTURE.md`, `docs/` | The system of record: core beliefs, plans, style, testing, security, agent tools, the knowledge-base rules |
 | `docs/exec-plans/` | Exec plans, starting with the bootstrap plan, and the tech-debt tracker |
-| `scripts/` | Doc checks, tracked-file and machine-detail checks, the skills mirror, the agent guard hook, setup; each with tests |
+| `scripts/` | Doc checks, tracked-file and machine-detail checks, skill frontmatter and the skills mirror, the agent guard hook, setup; each with tests |
 | `.githooks/pre-commit` | Runs the fast checks, plus gitleaks when installed |
 | `.github/workflows/` | CI (`npm run verify` on Linux, Windows and macOS, and gitleaks), Copilot setup steps, opt-in Claude mention and review workflows |
 | `.gitleaks.toml`, `.gitignore`, `.gitattributes`, `.editorconfig`, `.env.example`, `.nvmrc` | Secret scanning, ignores, LF line endings, editor defaults, env variable names, Node version |
