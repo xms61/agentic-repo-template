@@ -9,11 +9,14 @@ updates:
       actions:
         patterns: ['*']
 
-  # Minor and patch updates arrive as one grouped PR; each major gets its own.
+  # Minor and patch updates arrive as one grouped PR; each major gets its own. The cooldown matches
+  # min-release-age in .npmrc, so Dependabot doesn't propose a version npm would refuse; security updates skip it.
   - package-ecosystem: npm
     directory: /
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 7
     groups:
       npm:
         patterns: ['*']

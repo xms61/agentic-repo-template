@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // Checks the knowledge base described in docs/KNOWLEDGE_BASE.md: links resolve, every doc is reachable from
-// AGENTS.md, docs carry status frontmatter, folder indexes list their docs, exec plans have their sections.
+// AGENTS.md, docs carry status frontmatter, folder indexes list their docs, exec plans have their sections, and
+// every `npm run` command names a script in package.json.
 // Exits non-zero on errors. Warnings (stale docs, template placeholders) are the doc-gardening pass's work list.
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { dirname, join, posix, resolve } from 'node:path';
@@ -170,6 +171,26 @@ function missingSections(text, sections) {
   return sections.filter((section) => !headings.has(section.toLowerCase()));
 }
 
+// The npm scripts package.json defines; none when it is missing or unreadable.
+function npmScripts(root) {
+  try {
+    return new Set(Object.keys(JSON.parse(readFileSync(join(root, 'package.json'), 'utf8')).scripts ?? {}));
+  } catch {
+    return new Set();
+  }
+}
+
+// `npm run <script>` commands, in code too, since that is where commands are written. Options before the name
+// (`npm run -s verify`) and a trailing full stop aren't part of it.
+function npmRunCommands(text) {
+  const commands = [];
+  text.split(/\r?\n/).forEach((line, index) => {
+    for (const match of line.matchAll(/\bnpm run (?:--?[\w-]+(?:=\S+)?\s+)*(\w[\w:-]*(?:\.[\w:-]+)*)/g))
+      commands.push({ number: index + 1, script: match[1] });
+  });
+  return commands;
+}
+
 function placeholderLines(text) {
   return proseLines(text)
     .filter(({ text: line }) => line.includes(PLACEHOLDER))
@@ -193,12 +214,19 @@ export function checkDocs(root, today = new Date()) {
     errors.push(`${TEMPLATE_INTRO}: the template's introduction is left after bootstrap; delete it so GitHub shows the project's README`);
 
   const reachable = reachableFrom(ENTRY, texts);
+  const scripts = npmScripts(root);
   const statuses = new Map();
   for (const [path, text] of texts) {
     const kind = kindOf(path);
     if (kind === 'reference') continue;
     for (const target of linkTargets(text)) {
       if (!existsSync(join(root, resolveLink(path, target)))) errors.push(`${path}: broken link to ${target}`);
+    }
+    for (const { number, script } of npmRunCommands(text)) {
+      if (!scripts.has(script))
+        errors.push(
+          `${path}:${number}: \`npm run ${script}\` names no script in package.json; fix the command, or add the script to package.json`,
+        );
     }
     for (const line of placeholderLines(text)) {
       if (bootstrapping) warnings.push(`${path}:${line}: template placeholder left`);

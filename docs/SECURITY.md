@@ -1,6 +1,6 @@
 ---
 status: draft
-last-verified: 2026-10-14
+last-verified: 2026-10-19
 ---
 
 # Security
@@ -13,7 +13,7 @@ last-verified: 2026-10-14
 
 ## Coding agents on developer machines
 - Instructions are requests; boundaries are guarantees. Each must-never rule in AGENTS.md has a hook, permission, sandbox limit or check behind it where one is possible ([what enforces each one](#boundaries-and-what-enforces-them)).
-- Claude Code runs shell commands in its sandbox (macOS, Linux and WSL2; native Windows runs them unsandboxed), with network limited to the domains in `.claude/settings.json`. Codex runs in `workspace-write` mode with no network unless you approve it.
+- Claude Code runs shell commands in its sandbox (macOS, Linux and WSL2; native Windows runs them unsandboxed), with network limited to the domains in `.claude/settings.json`. `allowUnsandboxedCommands` is off, so it can't retry a blocked command outside the sandbox. If the sandbox can't start, Claude Code warns and runs commands unsandboxed; to make it stop instead, set `failIfUnavailable` ([AGENT_TOOLS.md](AGENT_TOOLS.md#claude-code)). Codex runs in `workspace-write` mode with no network unless you approve it.
 - Don't run an agent with permission checks bypassed outside a disposable container or VM. People approve almost every prompt they see, so prompts are not a boundary; sandboxes are.
 - Keep agent CLIs updated and install packages from lockfiles. Malware has run locally installed agent CLIs with their permission checks switched off to search machines for secrets (the s1ngularity npm attack, 2025).
 
@@ -43,7 +43,8 @@ Each boundary in [AGENTS.md](../AGENTS.md) and what stops an agent from crossing
 
 ## Agents in CI
 - An agent that holds private data, reads untrusted content (issue and PR text, comments, web pages, dependency files) and can send data out can be steered into leaking it: the lethal trifecta. Every agent workflow removes at least one leg.
-- Agent workflows are opt-in, run only for people with write access, skip forks and bots, request the least permissions they need, and pin actions to commit SHAs.
+- Agent workflows are opt-in, run only for people with write access, skip forks and bots, request the least permissions they need, cap each run's turns and dollars, and pin actions to commit SHAs.
+- On a pull request, the Claude action resets its own config files (`.claude/`, `CLAUDE.md`, `.mcp.json` and a few more, listed in its security docs) to the base branch before Claude starts. The guard hook script, AGENTS.md and the `package.json` scripts stay as the pull request wrote them, and run with the job's secrets. That is why both workflows skip forks: `claude.yml` checks where the pull request comes from before it runs. A hook in `.claude/settings.json` that runs a repo script or an `npm run` script runs the pull request's version too.
 - Untrusted text (issue or PR titles and bodies, comments, branch names) is never interpolated into an agent prompt or a shell command in a workflow. Pass the PR number and let the agent read the rest as data. Interpolated text is how attackers took over CI agents in the "PromptPwnd" attacks (2025).
 - AI review is advisory. Branch protection requires the CI checks and a human approval before merge.
 - On a team, `.github/CODEOWNERS` assigns the paths REVIEW.md flags for a human (`.github/`, `.githooks/`, `.agents/`, `.claude/`, `.codex/`, `.gemini/` and `scripts/agent-hooks/`) to people, and branch protection requires code-owner review. It works only with branch protection and a reviewer other than the author, so a one-person repository skips it.
@@ -51,6 +52,7 @@ Each boundary in [AGENTS.md](../AGENTS.md) and what stops an agent from crossing
 ## Dependencies
 - Ask before adding one. Check that the package exists, is maintained, and is the one you meant: models invent plausible package names, and attackers register them.
 - Lockfiles are committed and changed only by the package manager.
+- `.npmrc` sets `min-release-age=7` (npm 11.10 or later): npm won't install a version published in the last seven days, a window in which many malicious releases are caught and pulled. Dependabot's version updates wait as long; its security updates don't. To take an urgent fix sooner, install it with `--min-release-age=0`. Claude Code asks before editing `.npmrc`, since removing the setting is how an attack would turn it off.
 - Dependabot keeps actions and packages current; review its PRs like any other, and check that a new action SHA is the release tag it claims. Dependabot alerts and security updates are repository settings: turn them on, so a known vulnerability in a dependency raises an alert and a fix PR.
 
 ## Reporting a vulnerability

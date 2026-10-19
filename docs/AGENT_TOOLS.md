@@ -1,6 +1,6 @@
 ---
 status: draft
-last-verified: 2026-10-15
+last-verified: 2026-10-19
 ---
 
 # Agent tools
@@ -38,7 +38,9 @@ Do the steps in that agent's **Remove** list below. Then delete the agent's sect
 ## Claude Code
 **Files:** [CLAUDE.md](../CLAUDE.md) (imports AGENTS.md; an import instead of a symlink, because symlinks break on Windows checkouts), [.claude/settings.json](../.claude/settings.json) (permissions, sandbox, the guard hook), [.claude/agents/reviewer.md](../.claude/agents/reviewer.md) (fresh-context review subagent), `.claude/skills/` (the mirror of `.agents/skills/` that [scripts/sync-skills.mjs](../scripts/sync-skills.mjs) writes, because Claude Code reads skills only from `.claude/skills/`; `.gitattributes` marks it as generated, so GitHub collapses it in pull request diffs), and the workflows [claude.yml](../.github/workflows/claude.yml) (answers `@claude`) and [claude-review.yml](../.github/workflows/claude-review.yml) (reviews ready PRs).
 
-**Notes:** the sandbox works on macOS, Linux and WSL2; on native Windows, commands run unsandboxed and the permission rules and hook still apply. Personal settings go in `.claude/settings.local.json`, which git ignores.
+**Notes:** the sandbox works on macOS, Linux and WSL2; on native Windows, commands run unsandboxed and the permission rules and hook still apply. When the sandbox can't start, for example because a dependency is missing, Claude Code warns and runs commands unsandboxed. On macOS, Linux and WSL2, make that a hard stop with `"sandbox": { "failIfUnavailable": true }` in `.claude/settings.local.json`; the shared settings leave it off so native Windows keeps working. Personal settings go in `.claude/settings.local.json`, which git ignores.
+
+**Workflows:** each run is capped in turns and dollars (`--max-turns` and `--max-budget-usd` in the workflow's `claude_args`): $5 for `claude.yml` and $3 for a review. Raise them if runs stop before they finish. Both skip pull requests from forks ([SECURITY.md](SECURITY.md#agents-in-ci)).
 
 **Switch on the workflows:** run `/install-github-app` in Claude Code, or install the Claude GitHub App and add an `ANTHROPIC_API_KEY` repository secret by hand. Then set the repository variable `CLAUDE_ACTIONS` to `on`. Both workflows do nothing until that variable is set.
 

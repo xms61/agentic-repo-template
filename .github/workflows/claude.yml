@@ -3,7 +3,8 @@ name: Claude
 # Answers @claude in issues and pull requests: questions, fixes and small features, pushed to a claude/ branch
 # for review. Opt-in: nothing runs until the repository variable CLAUDE_ACTIONS is "on" and the
 # ANTHROPIC_API_KEY secret is set (docs/AGENT_TOOLS.md). The action runs only for people with write access to
-# the repository and ignores bots, because the issue or comment text it reads becomes part of its prompt.
+# the repository and ignores bots, because the issue or comment text it reads becomes part of its prompt. It
+# skips pull requests from forks (the source job below). Each run is capped at 40 turns and $5.
 on:
   issue_comment:
     types: [created]
@@ -19,7 +20,10 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  claude:
+  # On a pull request from a fork, the action would check out the fork's code, and files the action doesn't reset
+  # to the base branch (the guard hook script, AGENTS.md, package.json scripts) would run in a job that holds the
+  # API key and a write token. So this job finds out where the pull request comes from, and forks get no run.
+  source:
     if: >-
       vars.CLAUDE_ACTIONS == 'on' && (
         (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
@@ -27,6 +31,30 @@ jobs:
         (github.event_name == 'pull_request_review' && contains(github.event.review.body, '@claude')) ||
         (github.event_name == 'issues' && (contains(github.event.issue.body, '@claude') || contains(github.event.issue.title, '@claude')))
       )
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      pull-requests: read
+    outputs:
+      fork: ${{ steps.check.outputs.fork }}
+    steps:
+      - id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number || (github.event.issue.pull_request && github.event.issue.number) || '' }}
+        run: |
+          fork=false
+          if [ -n "$PR" ]; then
+            fork=$(gh pr view "$PR" --repo "$GITHUB_REPOSITORY" --json isCrossRepository --jq .isCrossRepository)
+          fi
+          echo "fork=$fork" >> "$GITHUB_OUTPUT"
+          if [ "$fork" = true ]; then
+            echo "::notice::Pull request #$PR comes from a fork, so Claude doesn't run on it (docs/SECURITY.md#agents-in-ci)."
+          fi
+
+  claude:
+    needs: source
+    if: needs.source.outputs.fork == 'false'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:
@@ -47,4 +75,5 @@ jobs:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           claude_args: |
             --max-turns 40
+            --max-budget-usd 5
             --allowedTools "Bash(npm run verify),Bash(npm run check:docs),Bash(npm run check:files),Bash(npm run check:skills),Bash(npm run sync:skills),Bash(npm run test:scripts),Bash(node --test *)"

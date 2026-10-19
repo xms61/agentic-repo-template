@@ -165,6 +165,27 @@ test('checks links in agent config but needs no frontmatter there', () => {
   ]);
 });
 
+test('passes when every npm run command in the docs names a script in package.json', () => {
+  const root = minimalRepo({
+    'package.json': JSON.stringify({ scripts: { verify: 'x', 'check:files': 'x' } }),
+    'docs/STYLE.md': `${frontmatter()}Run \`npm run verify\`, \`npm run -s verify\` or npm run verify.\n\`\`\`bash\nnpm run check:files -- --staged\n\`\`\`\nAdd a script with \`npm run <name>\`.\n`,
+  });
+  assert.deepEqual(checkDocs(root, TODAY).errors, []);
+});
+
+test('reports an npm run command whose script is not in package.json', () => {
+  const root = minimalRepo({
+    'package.json': JSON.stringify({ scripts: { verify: 'x' } }),
+    'AGENTS.md': '# Map\n[Style](docs/STYLE.md)\n| Lint | `npm run lint` |\n',
+    'docs/STYLE.md': `${frontmatter()}\`\`\`bash\nnpm run verify && npm run typecheck\n\`\`\`\n`,
+  });
+  const fix = 'fix the command, or add the script to package.json';
+  assert.deepEqual(checkDocs(root, TODAY).errors, [
+    `AGENTS.md:3: \`npm run lint\` names no script in package.json; ${fix}`,
+    `docs/STYLE.md:6: \`npm run typecheck\` names no script in package.json; ${fix}`,
+  ]);
+});
+
 test('skips generated docs, scratch notes and agent worktrees', () => {
   const root = minimalRepo({
     'docs/generated/db-schema.md': '# Schema\n',
