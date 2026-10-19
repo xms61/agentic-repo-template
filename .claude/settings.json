@@ -28,6 +28,7 @@
       "PowerShell(git push *:main *)",
       "Edit(.github/workflows/**)",
       "Edit(.githooks/**)",
+      "Edit(.npmrc)",
       "Edit(.claude/**)",
       "Edit(.codex/**)",
       "Edit(.gemini/**)",
@@ -42,12 +43,17 @@
       "Edit(!.env.example)",
       "Read(*.pem)",
       "Read(*.key)",
+      "Read(*.p12)",
+      "Read(*.pfx)",
       "Read(id_rsa*)",
+      "Read(id_dsa*)",
+      "Read(id_ecdsa*)",
       "Read(id_ed25519*)"
     ]
   },
   "sandbox": {
     "enabled": true,
+    "allowUnsandboxedCommands": false,
     "network": {
       "allowedDomains": ["github.com", "*.github.com", "registry.npmjs.org"]
     }

@@ -13,6 +13,6 @@
     "check:files": "node scripts/check-tracked-files.mjs",
     "check:skills": "node scripts/check-skills.mjs && node scripts/sync-skills.mjs --check",
     "sync:skills": "node scripts/sync-skills.mjs",
-    "test:scripts": "node --test \"scripts/**/*.test.mjs\""
+    "test:scripts": "node --test --test-reporter=dot \"scripts/**/*.test.mjs\""
   }
 }
